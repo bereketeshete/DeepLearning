@@ -179,7 +179,7 @@ The resolution of each cropped image was estimated using the ImageDecorrleationA
 ## 5. Time estimation
 Installing and configuring the python enviroment takes about 1 hour. This may vary depending on the speed of the network. 
 
-Typically, training a model on a “normal” desktop computer takes around 2 days for 2000 epoch. This may vary depending on the sample size, batch size and the frequency of saving the intermediate models. 
+Typically, training a model on a PC with NIVIDA TITAN RTX takes around 4 days for 2000 epoch. This may vary depending on the sample size, batch size and the frequency of saving the intermediate models. 
 
 Reconstructing a sample on a “normal” desktop computer takes about 1 second (not counting the time to load the model).
 
