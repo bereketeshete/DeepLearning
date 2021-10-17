@@ -184,4 +184,5 @@ Typically, training a model on a PC with NIVIDA TITAN RTX takes around 4 days fo
 Reconstructing a sample on a “normal” desktop computer takes about 1 second (not counting the time to load the model).
 
 ## 6. Note
-Part of the code is modified from https://github.com/milesial/Pytorch-UNet 
+Part of the code is modified from https://github.com/milesial/Pytorch-UNet AND
+https://github.com/drbeiliu/DeepLearning
