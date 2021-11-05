@@ -40,7 +40,7 @@ np.set_printoptions(threshold=sys.maxsize)
 # ground = plt.imread('D:/Bereket/DeepLearning/Analysis/Control variable/Sample_755(2).tif')
 
 # Test_1 - Luhong 2020 Trained, before and after restoration
-# Test_3 - CIRL Trained
+# Test_3 - CIRL Trained, before and after restoration
 # Test 4 - CIRL Trained, between ground and predicted
 # Test 5 - Luhong 2020 Trained, between ground and predicted
 
