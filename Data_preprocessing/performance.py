@@ -1,16 +1,20 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Tue Sep 10 14:36:19 2019
+@author: Bereket Kebede
+Modified on Sun Dec 05 10:43:00 2021
 
-@author: ruiyan
 """
+
+###################################################################
+# Import Libraries
+
 from xlwt import *
 import numpy as np
 import os
 import math
 from skimage import io, transform
 from PIL import Image
+from skimage.metrics import structural_similarity
+import easygui
 
 def psnr(img1, img2):
     img1 = (img1/np.amax(img1))*255
@@ -21,6 +25,8 @@ def psnr(img1, img2):
     PIXEL_MAX = 255.0
     return 20 * math.log10(PIXEL_MAX / math.sqrt(mse))
 
+###################################################################
+# NRMSE
 
 def nrmse(img_gt, img2, type="sd"):
     mse = np.mean( (img_gt - img2) ** 2 )
@@ -38,35 +44,47 @@ def nrmse(img_gt, img2, type="sd"):
     return nrmse
 
 
-#def ssim(img1, img2, data_range = None):
-#    #if img2.min() < 0:
-#    #   img2 += abs(img2.min())
-#    img2 = (img2/img2.max()) * img1.max()
-#    #img1 = (img1/img1.max()) * 255
-#    if data_range is None:
-#        score = compare_ssim(img1, img2)
-#    else:
-#        score = compare_ssim(img1, img2, data_range = data_range)
-#    return score
+def ssim(img1, img2, data_range = None):
+   #if img2.min() < 0:
+   #   img2 += abs(img2.min())
+   img2 = (img2/img2.max()) * img1.max()
+   #img1 = (img1/img1.max()) * 255
+
+   if data_range is None:
+       score = structural_similarity(img1, img2)
+   else:
+       score = structural_similarity(img1, img2, data_range = data_range)
+   return score
 
 if __name__ == "__main__":
-    train_in_path="/.../microtubule/prediction/"
-    train_gt_path="/.../microtubule/HER/"
-    data_save = "/.../"
-    dirs = os.listdir(train_gt_path) 
-    for i in range(len(train_in_path_all)):
-        train_in_path = train_in_path_all[i]
-        p_value = np.zeros((len(dirs), 2))
+
+    # Paths
+
+    train_in_path="D:/Bereket/microtubule/Training_Testing_microtubules/Prediction_validation_32/"
+    train_gt_path="D:/Bereket/microtubule/Training_Testing_microtubules/testing_HER/"
+    data_save = "D:/Bereket/microtubule/Training_Testing_microtubules/metrics/"
+
+    print("choose prediction path/train_in_path")
+    test_in_path = easygui.diropenbox() + "/"
+    print("choose train_gt_path")
+    train_gt_path = easygui.diropenbox() + '/'
+    print("choose metrics path")
+    metrics_path = easygui.diropenbox() + '/'
+
+    dirs = os.listdir(train_gt_path)
+
+    for i in range(1):
+        #train_in_path = train_in_path_all[i]
+        p_value = np.zeros((len(dirs), 3))
         for idx in range(len(dirs)):
-            image_name = os.path.join(train_gt_path, dirs[idx])
+            image_name = train_gt_path + dirs[idx]
             data_gt = io.imread(image_name)
             if i < 5:
-                image_name = os.path.join(train_in_path, dirs[idx][:-4]+'_pred.tif')
+                image_name = train_in_path + dirs[idx][:-4]+'_pred.tif'
             else:
-                image_name = os.path.join(train_in_path, dirs[idx][:-4]+'_pred_pred.tif')
+                image_name = train_in_path + dirs[idx][:-4]+'_pred_pred.tif'
             data_in = Image.open(image_name)
             data_in = np.array(data_in)
-            
             
             min_v = np.quantile(data_gt, 0.01)
             max_v = np.quantile(data_gt, 0.998)
@@ -79,10 +97,11 @@ if __name__ == "__main__":
             
             p_value[idx,0] = psnr(data_gt, data_in)
             p_value[idx,1] = nrmse(data_gt, data_in)
-        
+            p_value[idx,2] = ssim(data_gt, data_in)
+
         file = Workbook(encoding = 'utf-8')
         table = file.add_sheet('performance')
         for k,p in enumerate(p_value):
             for j,q in enumerate(p):
                     table.write(k,j,q)
-        file.save(data_save+str(i)+'.xls')
+        file.save(metrics_path+'metrics'+'.xls')
